@@ -3,7 +3,7 @@ const app = express()
 const cors = require('cors')
 const qrcode = require('qrcode-terminal');
 const { Client } = require('whatsapp-web.js');
-const client = new Client();
+const client = new Client({ puppeteer: { headless: true,args: ['--no-sandbox', '--disable-setuid-sandbox']}});
 
 app.use(cors())
 
@@ -43,5 +43,6 @@ const port = 8001
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
+  console.log(`success running`)
 })
 
