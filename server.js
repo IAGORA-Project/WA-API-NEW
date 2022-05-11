@@ -2,8 +2,11 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const qrcode = require('qrcode-terminal');
-const { Client } = require('whatsapp-web.js');
-const client = new Client({ puppeteer: { headless: true,args: ['--no-sandbox', '--disable-setuid-sandbox']}});
+const { Client, LocalAuth } = require('whatsapp-web.js');
+const client = new Client({
+	authStrategy: new LocalAuth(),
+	puppeteer: { headless: true,args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']}
+});
 
 app.use(cors())
 
@@ -11,9 +14,28 @@ client.on('qr', qr => {
     qrcode.generate(qr, {small: true});
 });
 
+client.on('authenticated', () => {
+    console.log('AUTHENTICATED');
+});
+
+client.on('auth_failure', msg => {
+    // Fired if session restore was unsuccessful
+    console.error('AUTHENTICATION FAILURE', msg);
+});
+
 client.on('ready', () => {
     console.log('Client is ready!');
 });
+
+client.on('auth_failure', msg => {
+    // Fired if session restore was unsuccessful
+    console.error('AUTHENTICATION FAILURE', msg);
+});
+
+client.on('disconnected', (reason) => {
+	console.log('message', 'Whatsapp is disconnected!');
+});
+
 
 client.initialize();
 
@@ -43,6 +65,5 @@ const port = 8001
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
-  console.log(`success running`)
 })
 
