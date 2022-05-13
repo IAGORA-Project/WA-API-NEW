@@ -65,5 +65,6 @@ const port = 8001
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
+  console.log(`Success Running`);
 })
 
